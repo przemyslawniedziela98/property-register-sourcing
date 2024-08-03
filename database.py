@@ -63,3 +63,17 @@ class MongoDBHandler:
         data['injection_timestamp'] = datetime.now()
         db['data'].insert_one(data)
         logger.info(f"Data appended to {db.name} at {data['injection_timestamp']}.")
+    
+    def get_last_book_by_department(self, department_code: str) -> int:
+        """Retrieve last book code with a specific department code from the metadata database.
+
+        Args:
+            department_code (str): The department code to search for.
+
+        Returns:
+            int: a code of last book matching the department code.
+        """
+        books = self.books_metadata_db['data'].find({'id': {'$regex': f'^{department_code}/'}}, 
+                                                    {'id': 1})
+        
+        return max([book['id'].split('/')[1] for book in books if '/' in book['id']], default = None)

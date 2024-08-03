@@ -221,7 +221,11 @@ class EvidenceBook:
 
     def run_book_sourcing(self) -> None:
         """Run the book sourcing process to retrieve and print book information."""
-        for number in range(int(1e8)):
+        existing_department_books = db.get_last_book_by_department(self.department_code)
+        iteration_range = range(int(existing_department_books) + 1, int(1e8)) \
+                          if existing_department_books else range(int(1e8))
+                              
+        for number in iteration_range:
             id_book = f'{number:08}'
             control_number = str(self.get_control_number(self.department_code, id_book))
 
